@@ -8,3 +8,9 @@ class Posts(SQLModel, table=True):
     published: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class Users(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(nullable=False)
+    username: str = Field(nullable=False, unique=True)
+    password: str = Field(nullable=False)
+    email: str = Field(nullable=False)
