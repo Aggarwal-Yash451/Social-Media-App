@@ -7,6 +7,7 @@ class Posts(SQLModel, table=True):
     content: str = Field(nullable=False)
     published: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    user_id: int = Field(default=None, foreign_key="users.id")
 
 class Users(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
