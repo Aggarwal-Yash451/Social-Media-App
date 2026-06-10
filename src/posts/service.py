@@ -2,6 +2,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from ..db.schema import Posts
 from .models import PostCreateModel
+from fastapi import HTTPException
 
 class PostService:
     async def get_all_posts(self, user_id, session:AsyncSession):
@@ -22,20 +23,20 @@ class PostService:
         statement = select(Posts).where(Posts.id == id)
         post = await session.exec(statement)
         
-        if(post == None):
-            return None
-        
         db_post = post.first()
 
+        if db_post is None:
+            raise HTTPException(status_code=404, detail="Post not found")
+
         if db_post.user_id != user_id:
-            return None
+            raise HTTPException(status_code=401, detail="Unauthorized request")
 
         return db_post
     
     async def update_post(self, id: int, user_id: int, post_content: PostCreateModel, session: AsyncSession):
         post = await self.get_post(id, user_id, session)
-        if(post == None):
-            return None
+        if post is None:
+            raise HTTPException(status_code=404, detail="Post not found")
         post.title = post_content.title
         post.content = post_content.content
         post.published = post_content.published
@@ -48,7 +49,7 @@ class PostService:
     
     async def delete_post(self, id: int, user_id: int, session: AsyncSession):
         post = await self.get_post(id, user_id, session)
-        if(post == None): 
-            return
+        if post is None:
+            raise HTTPException(status_code=404, detail="Post not found")
         await session.delete(post)
         await session.commit()
