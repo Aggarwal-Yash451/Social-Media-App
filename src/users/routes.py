@@ -17,3 +17,4 @@ async def get_current_user(payload: dict = Depends(verify_token)):
 async def get_user(id: int, session: AsyncSession = Depends(get_session)):
     response = await user_service.get_user(id, session)
     return response
+

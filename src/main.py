@@ -6,13 +6,14 @@ from .auth.routes import auth_router
 from .users.routes import user_router
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
+from .groups.routes import group_router
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 oauth2_dep = Annotated[str, Depends(oauth2_scheme)]
 
 @asynccontextmanager
 async def life_span(app: FastAPI):
-    from .db.schema import Posts, Users
+    from .db.schema import Posts, Users, Groups, UserGroupLink
     print("Server is starting...")
     await init_db()
     yield
@@ -34,3 +35,4 @@ async def root():
 app.include_router(post_router, prefix=f"/api/{version}/posts", tags=["Posts"])
 app.include_router(user_router, prefix=f"/api/{version}/users", tags=["Users"])
 app.include_router(auth_router, prefix=f"/api/{version}/auth", tags=["Auth"])
+app.include_router(group_router, prefix=f"/api/{version}/groups", tags=["Groups"]) 

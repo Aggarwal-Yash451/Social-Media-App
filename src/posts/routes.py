@@ -38,3 +38,4 @@ async def delete_post(id: int, payload: dict = Depends(verify_token), session: A
     user_id = int(payload["sub"])
     await post_service.delete_post(id, user_id, session)
     return "Post deletion success"
+    
